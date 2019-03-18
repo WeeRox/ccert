@@ -42,7 +42,7 @@ acmee order_new(EVP_PKEY *pkey)
 	key = json_add_key(obj, "type");
 	json_add_string(key, "dns");
 	key = json_add_key(obj, "value");
-	json_add_string(key, "www.aronbergman.se");
+	json_add_string(key, prompt_text("Enter the domain the you want a certificate for: "));
 
 	jws = generate_jws(protected, payload, pkey);
 
@@ -119,9 +119,9 @@ acmee order_finalize(EVP_PKEY *pkey)
 	X509_REQ *x509_req = X509_REQ_new();
 	X509_NAME *x509_name = X509_REQ_get_subject_name(x509_req);
 
-	X509_NAME_add_entry_by_txt(x509_name, "CN", MBSTRING_ASC, "www.aronbergman.se", 18, -1, 0);
-	X509_NAME_add_entry_by_txt(x509_name, "C", MBSTRING_ASC, "SE", 2, -1, 0);
-	X509_NAME_add_entry_by_txt(x509_name, "O", MBSTRING_ASC, "Aron Bergman", 12, -1, 0);
+	char *cn = ((struct acme_identifier *) order.identifiers->data)->value;
+
+	X509_NAME_add_entry_by_txt(x509_name, "CN", MBSTRING_ASC, cn, strlen(cn), -1, 0);
 
 	X509_REQ_set_pubkey(x509_req, csr_key);
 	X509_REQ_sign(x509_req, csr_key, EVP_sha256());
