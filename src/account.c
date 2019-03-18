@@ -74,7 +74,7 @@ acmee account_new(EVP_PKEY *pkey)
 	curl_easy_setopt(get_curl(), CURLOPT_POSTFIELDS, json_print(jws, 0, 0));
 	request_perform();
 
-	if (get_status_code() == 200)
+	if (get_status_code() == 201)
 	{
 		CA_ACCOUNT = get_header("Location");
 	}
